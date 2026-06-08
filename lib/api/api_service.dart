@@ -4,6 +4,7 @@ import '../models/stock_item.dart';
 
 class ApiService {
   static const String baseUrl = 'https://stock-dashboard-0atp.onrender.com';
+  static const String _appApiKey = 'SP-a4f8c2e1d9b3';
 
   /// 시총 상위 종목: Claude 웹 검색으로 직접 조회 (스트리밍)
   static Stream<StockItem> fetchStocks({
@@ -40,6 +41,7 @@ class ApiService {
     try {
       final request = http.Request('POST', Uri.parse('$baseUrl/search'));
       request.headers['Content-Type'] = 'application/json';
+      request.headers['X-API-Key'] = _appApiKey;
       request.body = jsonEncode({
         'prompt': prompt,
         'lang': lang,
