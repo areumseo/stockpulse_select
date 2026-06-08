@@ -1,39 +1,39 @@
 # Stockpulse Select
 
-AI 기반 주식 대시보드 iOS 앱. Claude AI가 실시간 웹 검색으로 한국/미국 시장의 최신 종목 정보를 분석해서 보여줍니다.
+An AI-powered stock dashboard iOS app. Claude AI searches the web in real time to analyze and display the latest stock information for Korean and US markets.
 
-## 주요 기능
+## Features
 
-- **한국/미국 시장** 전환 및 섹터별 탭
-- **시가총액 상위 20개 종목** 실시간 조회
-- **ETF 검색** (국내/해외/레버리지/인버스, 최근 1개월~6개월 필터)
-- **Claude AI 스트리밍**: 카드가 완성되는 순서대로 실시간 표시
-- **캐시 전략**: 첫 로드 후 즉시 캐시 표시 + 백그라운드 자동 갱신
-- **새로고침**: 위에서 당기기(pull-to-refresh) / 아래로 스크롤
-- **검색 중단** 버튼
-- **종목 링크**: 한국 → 네이버 증권, 미국 → Yahoo Finance
+- **Korean / US market** switching with sector tabs
+- **Top 20 stocks by market cap** with real-time data
+- **ETF search** (domestic / overseas / leveraged / inverse, with 1M–6M filters)
+- **Claude AI streaming**: cards appear one by one as they're ready
+- **Cache strategy**: instant cache display on load + background auto-refresh
+- **Refresh**: pull-to-refresh from top / scroll to bottom
+- **Cancel search** button
+- **Stock links**: Korean stocks → Naver Finance, US stocks → Yahoo Finance
 
-## 기술 스택
+## Tech Stack
 
 - **Frontend**: Flutter (iOS)
-- **Backend**: FastAPI (Render 호스팅)
+- **Backend**: FastAPI (hosted on Render)
 - **AI**: Anthropic Claude (`claude-sonnet-4-5`) + Web Search Tool
-- **통신**: HTTP 스트리밍 + 실시간 JSON 파싱 (brace counting)
+- **Streaming**: HTTP streaming + real-time JSON parsing (brace counting)
 
-## 백엔드
+## Backend
 
-[stock-dashboard](https://github.com/areumseo/stock-dashboard) 리포에서 관리.
+Managed in the [stock-dashboard](https://github.com/areumseo/stock-dashboard) repository.
 
-API 엔드포인트: `https://stock-dashboard-0atp.onrender.com`
+API endpoint: `https://stock-dashboard-0atp.onrender.com`
 
-## 실행 방법
+## Getting Started
 
 ```bash
 flutter pub get
 flutter run
 ```
 
-릴리스 빌드 (기기 설치):
+Release build (device install):
 
 ```bash
 flutter build ipa --release --export-method development
