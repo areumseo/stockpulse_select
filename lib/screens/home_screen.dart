@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'search': '검색',
           'searching': 'Claude가 검색 중...',
           'no_results': '결과를 찾지 못했습니다.',
-          'empty_hint': '위 조건을 선택하고 검색하세요.',
+          'empty_hint': '조건을 선택하고 검색하세요.',
           'sector': '섹터',
           'disclaimer': '⚠️ 투자 참고 목적이며 투자 권유가 아닙니다.',
           'data_source': '출처: companiesmarketcap.com · 조회: ',
