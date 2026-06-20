@@ -95,6 +95,10 @@ class _HomeScreenState extends State<HomeScreen> {
           'no_results': '검색 결과가 없습니다.\n다른 조건으로 다시 시도해보세요.',
           'empty_hint': '조건을 선택하고 검색하세요.',
           'sector': '섹터',
+          'type': '유형',
+          'period': '기간',
+          'multiple': '배율',
+          'sort': '정렬',
           'keyword_hint': '추가 키워드 (선택) — 예: AI, 배당',
           'disclaimer': '⚠️ 투자 참고 목적이며 투자 권유가 아닙니다.',
           'data_source': '출처: companiesmarketcap.com · 조회: ',
@@ -111,6 +115,10 @@ class _HomeScreenState extends State<HomeScreen> {
           'no_results': 'No results found.\nTry different conditions.',
           'empty_hint': 'Select filters above and tap Search.',
           'sector': 'Sector',
+          'type': 'Type',
+          'period': 'Period',
+          'multiple': 'Multiple',
+          'sort': 'Sort',
           'keyword_hint': 'Keyword (optional) — e.g. AI, dividend',
           'disclaimer': '⚠️ For informational purposes only.',
           'data_source': 'Source: companiesmarketcap.com · As of ',
@@ -549,6 +557,93 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // ETF/레버리지 드롭다운 값(한글 키)의 영어 표시 라벨. 저장값은 한글 키 그대로 유지해
+  // _buildPrompt()의 switch/문자열 조립이 깨지지 않도록 함.
+  static const Map<String, String> _enFilter = {
+    '신규 상장 ETF': 'Newly Listed',
+    '꾸준히 수익률 상승': 'Steady Gainers',
+    '테마별 추천': 'Thematic Picks',
+    '최근 1개월': 'Last 1 Month',
+    '최근 3개월': 'Last 3 Months',
+    '최근 6개월': 'Last 6 Months',
+    '전체': 'All',
+    '2배 레버리지': '2x Leverage',
+    '인버스': 'Inverse',
+    '인버스 2배': 'Inverse 2x',
+    '코스피200': 'KOSPI 200',
+    '코스닥150': 'KOSDAQ 150',
+    '나스닥': 'NASDAQ',
+    '반도체': 'Semiconductor',
+    '2차전지': 'Battery',
+    '지수 추종 ETF': 'Index ETF',
+    '테마 ETF': 'Thematic ETF',
+    '배당 ETF': 'Dividend ETF',
+    '채권 ETF': 'Bond ETF',
+    '2x · 3x 전체': '2x · 3x (All)',
+    '3배 레버리지': '3x Leverage',
+    '인버스 레버리지': 'Inverse',
+    '기술/AI': 'Tech/AI',
+    '에너지': 'Energy',
+    '금융': 'Finance',
+    '바이오': 'Bio',
+    '수익률 높은 순': 'Top Performers',
+    'AUM 큰 순': 'Largest AUM',
+    '거래량 많은 순': 'Most Traded',
+  };
+
+  /// 저장값은 한글 키(`keys`), 화면 표시만 언어에 따라 현지화하는 드롭다운.
+  Widget _kvDropdown({
+    required String label,
+    required String value,
+    required List<String> keys,
+    required ValueChanged<String?> onChanged,
+    required bool isDark,
+  }) {
+    final fillColor = isDark ? const Color(0xFF1B1D27) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF2C2F3E) : const Color(0xFFDDE0E8);
+    final textColor = isDark ? Colors.white : Colors.black87;
+    String disp(String k) => _lang == 'ko' ? k : (_enFilter[k] ?? k);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(fontSize: 11, color: Color(0xFF8A8FA8))),
+        const SizedBox(height: 4),
+        DropdownButtonFormField<String>(
+          initialValue: value,
+          isDense: true,
+          dropdownColor: isDark ? const Color(0xFF1B1D27) : Colors.white,
+          style: TextStyle(fontSize: 13, color: textColor),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: fillColor,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: _kNavy),
+            ),
+          ),
+          items: keys
+              .map((k) => DropdownMenuItem(
+                  value: k,
+                  child: Text(disp(k),
+                      style: TextStyle(fontSize: 13, color: textColor))))
+              .toList(),
+          onChanged: onChanged,
+        ),
+      ],
+    );
+  }
+
   Widget _krStocksFilters(bool isDark) {
     final sectors = _lang == 'ko'
         ? ['전체', '반도체/IT', '2차전지', '바이오/헬스케어', '금융', '자동차', '에너지', '소비재']
@@ -565,9 +660,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _krEtfFilters(bool isDark) {
     return Column(children: [
       Row(children: [
-        Expanded(child: _dropdown(label: '유형', value: _krEtfType, items: ['신규 상장 ETF', '꾸준히 수익률 상승', '테마별 추천'], onChanged: (v) => setState(() => _krEtfType = v!), isDark: isDark)),
+        Expanded(child: _kvDropdown(label: t['type']!, value: _krEtfType, keys: const ['신규 상장 ETF', '꾸준히 수익률 상승', '테마별 추천'], onChanged: (v) => setState(() => _krEtfType = v!), isDark: isDark)),
         const SizedBox(width: 8),
-        Expanded(child: _dropdown(label: '기간', value: _krEtfPeriod, items: ['최근 1개월', '최근 3개월', '최근 6개월'], onChanged: (v) => setState(() => _krEtfPeriod = v!), isDark: isDark)),
+        Expanded(child: _kvDropdown(label: t['period']!, value: _krEtfPeriod, keys: const ['최근 1개월', '최근 3개월', '최근 6개월'], onChanged: (v) => setState(() => _krEtfPeriod = v!), isDark: isDark)),
       ]),
       const SizedBox(height: 8),
       _keywordField(hint: t['keyword_hint']!, value: _krEtfKeyword, onChanged: (v) => _krEtfKeyword = v, isDark: isDark),
@@ -576,9 +671,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _krLevFilters(bool isDark) {
     return Row(children: [
-      Expanded(child: _dropdown(label: '유형', value: _krLevType, items: ['전체', '2배 레버리지', '인버스', '인버스 2배'], onChanged: (v) => setState(() => _krLevType = v!), isDark: isDark)),
+      Expanded(child: _kvDropdown(label: t['type']!, value: _krLevType, keys: const ['전체', '2배 레버리지', '인버스', '인버스 2배'], onChanged: (v) => setState(() => _krLevType = v!), isDark: isDark)),
       const SizedBox(width: 8),
-      Expanded(child: _dropdown(label: '섹터', value: _krLevSector, items: ['전체', '코스피200', '코스닥150', '나스닥', '반도체', '2차전지'], onChanged: (v) => setState(() => _krLevSector = v!), isDark: isDark)),
+      Expanded(child: _kvDropdown(label: t['sector']!, value: _krLevSector, keys: const ['전체', '코스피200', '코스닥150', '나스닥', '반도체', '2차전지'], onChanged: (v) => setState(() => _krLevSector = v!), isDark: isDark)),
     ]);
   }
 
@@ -598,9 +693,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _usEtfFilters(bool isDark) {
     return Column(children: [
       Row(children: [
-        Expanded(child: _dropdown(label: '유형', value: _usEtfType, items: ['지수 추종 ETF', '테마 ETF', '배당 ETF', '채권 ETF'], onChanged: (v) => setState(() => _usEtfType = v!), isDark: isDark)),
+        Expanded(child: _kvDropdown(label: t['type']!, value: _usEtfType, keys: const ['지수 추종 ETF', '테마 ETF', '배당 ETF', '채권 ETF'], onChanged: (v) => setState(() => _usEtfType = v!), isDark: isDark)),
         const SizedBox(width: 8),
-        Expanded(child: _dropdown(label: '기간', value: _usEtfPeriod, items: ['최근 1개월', '최근 3개월', '최근 6개월'], onChanged: (v) => setState(() => _usEtfPeriod = v!), isDark: isDark)),
+        Expanded(child: _kvDropdown(label: t['period']!, value: _usEtfPeriod, keys: const ['최근 1개월', '최근 3개월', '최근 6개월'], onChanged: (v) => setState(() => _usEtfPeriod = v!), isDark: isDark)),
       ]),
       const SizedBox(height: 8),
       _keywordField(hint: t['keyword_hint']!, value: _usEtfKeyword, onChanged: (v) => _usEtfKeyword = v, isDark: isDark),
@@ -610,12 +705,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _usLevFilters(bool isDark) {
     return Column(children: [
       Row(children: [
-        Expanded(child: _dropdown(label: '배율', value: _usLevType, items: ['2x · 3x 전체', '2배 레버리지', '3배 레버리지', '인버스 레버리지'], onChanged: (v) => setState(() => _usLevType = v!), isDark: isDark)),
+        Expanded(child: _kvDropdown(label: t['multiple']!, value: _usLevType, keys: const ['2x · 3x 전체', '2배 레버리지', '3배 레버리지', '인버스 레버리지'], onChanged: (v) => setState(() => _usLevType = v!), isDark: isDark)),
         const SizedBox(width: 8),
-        Expanded(child: _dropdown(label: '섹터', value: _usLevSector, items: ['전체', '기술/AI', '반도체', '에너지', '금융', '바이오'], onChanged: (v) => setState(() => _usLevSector = v!), isDark: isDark)),
+        Expanded(child: _kvDropdown(label: t['sector']!, value: _usLevSector, keys: const ['전체', '기술/AI', '반도체', '에너지', '금융', '바이오'], onChanged: (v) => setState(() => _usLevSector = v!), isDark: isDark)),
       ]),
       const SizedBox(height: 8),
-      _dropdown(label: '정렬', value: _usSort, items: ['수익률 높은 순', 'AUM 큰 순', '거래량 많은 순'], onChanged: (v) => setState(() => _usSort = v!), isDark: isDark),
+      _kvDropdown(label: t['sort']!, value: _usSort, keys: const ['수익률 높은 순', 'AUM 큰 순', '거래량 많은 순'], onChanged: (v) => setState(() => _usSort = v!), isDark: isDark),
     ]);
   }
 
