@@ -39,19 +39,20 @@ class StockCard extends StatelessWidget {
   /// 저장(북마크) 토글 버튼 — SavedModel을 직접 구독.
   Widget _saveButton(BuildContext context) {
     final saved = context.watch<SavedModel>().isSaved(item.code);
-    return GestureDetector(
-      onTap: () async {
-        await context.read<SavedModel>().toggle(item);
-        await HapticFeedback.selectionClick();
+    return IconButton(
+      onPressed: () {
+        context.read<SavedModel>().toggle(item);
+        HapticFeedback.selectionClick();
       },
-      behavior: HitTestBehavior.opaque,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 6),
-        child: Icon(
-          saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-          size: 20,
-          color: saved ? const Color(0xFF006B65) : Colors.grey.shade400,
-        ),
+      iconSize: 20,
+      visualDensity: VisualDensity.compact,
+      padding: const EdgeInsets.only(left: 6),
+      constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+      splashRadius: 22,
+      tooltip: saved ? '저장 해제' : '저장',
+      icon: Icon(
+        saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+        color: saved ? const Color(0xFF006B65) : Colors.grey.shade400,
       ),
     );
   }
