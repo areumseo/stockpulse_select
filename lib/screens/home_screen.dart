@@ -223,14 +223,15 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_isKr) {
       if (_tabIndex == 1) {
         final theme = _krEtfKeyword.isEmpty ? '' : " '$_krEtfKeyword' 관련";
-        switch (_krEtfType) {
-          case '신규 상장 ETF':
-            return '$_krEtfPeriod 내에 KRX에 신규 상장된$theme 국내 ETF $n를 알려주세요. 상장일, 운용사, 투자 테마, 순자산총액, 수익률을 포함하세요.';
-          case '꾸준히 수익률 상승':
-            return '$_krEtfPeriod 동안$theme 꾸준히 수익률이 상승한 국내 ETF $n를 찾아주세요. 수익률 추이, AUM, 투자 테마, 주요 편입 종목을 포함하세요.';
-          default:
-            return '현재 주목받는$theme 국내 테마 ETF $n를 추천해주세요. $_krEtfPeriod 수익률, 운용사, 주요 종목, 투자 포인트를 포함하세요.';
-        }
+        final base = switch (_krEtfType) {
+          '신규 상장 ETF' =>
+            '$_krEtfPeriod 내에 KRX에 신규 상장된$theme 국내 ETF $n를 알려주세요. 상장일, 운용사, 투자 테마, 순자산총액, 수익률을 포함하세요.',
+          '꾸준히 수익률 상승' =>
+            '$_krEtfPeriod 동안$theme 꾸준히 수익률이 상승한 국내 ETF $n를 찾아주세요. 수익률 추이, AUM, 투자 테마, 주요 편입 종목을 포함하세요.',
+          _ =>
+            '현재 주목받는$theme 국내 테마 ETF $n를 추천해주세요. $_krEtfPeriod 수익률, 운용사, 주요 종목, 투자 포인트를 포함하세요.',
+        };
+        return '$base 단, 레버리지·인버스 ETF는 제외하세요.';
       } else {
         final lev = _krLevType == '전체' ? '' : '$_krLevType ';
         final sec = _krLevSector == '전체' ? '' : '$_krLevSector 관련 ';
@@ -239,16 +240,17 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       if (_tabIndex == 1) {
         final theme = _usEtfKeyword.isEmpty ? '' : " '$_usEtfKeyword' 관련";
-        switch (_usEtfType) {
-          case '지수 추종 ETF':
-            return '미국 지수 추종$theme ETF $n를 추천해주세요. $_usEtfPeriod 수익률, AUM, 추종 지수, 특징을 포함하세요.';
-          case '테마 ETF':
-            return '현재 주목받는$theme 미국 테마 ETF $n를 추천해주세요. $_usEtfPeriod 수익률, 운용사, 주요 종목, 투자 포인트를 포함하세요.';
-          case '배당 ETF':
-            return '미국 배당$theme ETF $n를 추천해주세요. 배당수익률, 배당 주기, $_usEtfPeriod 수익률, 운용사, 특징을 포함하세요.';
-          default:
-            return '미국 채권$theme ETF $n를 추천해주세요. 금리 민감도, $_usEtfPeriod 수익률, AUM, 특징과 리스크를 포함하세요.';
-        }
+        final base = switch (_usEtfType) {
+          '지수 추종 ETF' =>
+            '미국 지수 추종$theme ETF $n를 추천해주세요. $_usEtfPeriod 수익률, AUM, 추종 지수, 특징을 포함하세요.',
+          '테마 ETF' =>
+            '현재 주목받는$theme 미국 테마 ETF $n를 추천해주세요. $_usEtfPeriod 수익률, 운용사, 주요 종목, 투자 포인트를 포함하세요.',
+          '배당 ETF' =>
+            '미국 배당$theme ETF $n를 추천해주세요. 배당수익률, 배당 주기, $_usEtfPeriod 수익률, 운용사, 특징을 포함하세요.',
+          _ =>
+            '미국 채권$theme ETF $n를 추천해주세요. 금리 민감도, $_usEtfPeriod 수익률, AUM, 특징과 리스크를 포함하세요.',
+        };
+        return '$base 단, 레버리지·인버스 ETF는 제외하세요.';
       } else {
         final sec = _usLevSector == '전체' ? '' : '$_usLevSector 관련 ';
         return '미국 $sec$_usLevType ETF $n를 $_usSort 기준으로 알려주세요. 티커, 운용사, 최근 1개월 수익률, AUM, 추종 지수, 특징과 리스크를 포함하세요.';
