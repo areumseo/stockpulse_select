@@ -80,7 +80,7 @@ class AboutScreen extends StatelessWidget {
                       _Feature(icon: Icons.flag_rounded, text: '한국·미국 개별주 시가총액 상위 종목 분석'),
                       _Feature(icon: Icons.bar_chart_rounded, text: 'ETF · 레버리지 ETF 검색 및 요약'),
                       _Feature(icon: Icons.language_rounded, text: '한국어 / 영어 전환'),
-                      _Feature(icon: Icons.open_in_new_rounded, text: '나무증권 · 네이버 증권 · Yahoo Finance 연동'),
+                      _Feature(icon: Icons.open_in_new_rounded, text: '네이버 증권 · Yahoo Finance 연동'),
                       _Feature(icon: Icons.copy_rounded, text: '종목 코드 길게 눌러 복사'),
                     ],
                   ),
@@ -93,7 +93,7 @@ class AboutScreen extends StatelessWidget {
                   iconColor: const Color(0xFF3B6D11),
                   title: '데이터 출처',
                   child: const Text(
-                    'Claude AI (Anthropic)의 실시간 웹 검색을 통해 데이터를 수집합니다. 시가총액·주가·등락률 등 수치는 검색 시점의 공개 정보를 기반으로 하며, 실시간 호가 데이터가 아닐 수 있습니다.',
+                    '종목 리스트와 요약은 Claude AI (Anthropic)의 실시간 웹 검색으로 생성하고, 주가·등락률·시가총액 등 수치는 네이버 증권에서 조회합니다. 실시간 호가가 아닌 지연 시세일 수 있습니다.',
                     style: TextStyle(fontSize: 14, height: 1.6, color: Color(0xFF3A3F55)),
                   ),
                 ),

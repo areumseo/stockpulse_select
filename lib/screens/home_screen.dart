@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'sort': '정렬',
           'keyword_hint': '추가 키워드 (선택) — 예: AI, 배당',
           'disclaimer': '⚠️ 투자 참고 목적이며 투자 권유가 아닙니다.',
-          'data_source': '출처: companiesmarketcap.com · 조회: ',
+          'data_source': '시세: 네이버 증권 · 분석: Claude AI · 조회: ',
         }
       : {
           'subtitle': 'KR & US Stocks · ETFs · Leveraged ETFs',
@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'sort': 'Sort',
           'keyword_hint': 'Keyword (optional) — e.g. AI, dividend',
           'disclaimer': '⚠️ For informational purposes only.',
-          'data_source': 'Source: companiesmarketcap.com · As of ',
+          'data_source': 'Quotes: Naver Finance · Analysis: Claude AI · As of ',
         };
 
   Stream<StockItem> _buildStream() {
