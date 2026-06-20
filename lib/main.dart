@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/about_screen.dart';
+import 'screens/saved_screen.dart';
+import 'state/saved_model.dart';
 
 void main() {
-  runApp(const StockpulseApp());
+  final saved = SavedModel()..init();
+  runApp(StockpulseApp(saved: saved));
 }
 
 class StockpulseApp extends StatelessWidget {
-  const StockpulseApp({super.key});
+  final SavedModel saved;
+  const StockpulseApp({super.key, required this.saved});
 
   // 영문: San Francisco (iOS 시스템 폰트)
   // 한글: Noto Sans KR (fallback — SF에 한글 글리프 없을 때 자동 적용)
@@ -40,24 +45,27 @@ class StockpulseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Stockpulse Select',
-      debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.light,
+    return ChangeNotifierProvider<SavedModel>.value(
+      value: saved,
+      child: MaterialApp(
+        title: 'Stockpulse Select',
+        debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.light,
 
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: const Color(0xFFF7F8FA),
-        cardColor: Colors.white,
-        textTheme: _textTheme(),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF0A1628),
+        theme: ThemeData(
+          useMaterial3: true,
           brightness: Brightness.light,
+          scaffoldBackgroundColor: const Color(0xFFF7F8FA),
+          cardColor: Colors.white,
+          textTheme: _textTheme(),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF0A1628),
+            brightness: Brightness.light,
+          ),
         ),
-      ),
 
-      home: const _RootScreen(),
+        home: const _RootScreen(),
+      ),
     );
   }
 }
@@ -74,11 +82,13 @@ class _RootScreenState extends State<_RootScreen> {
 
   static const _screens = [
     HomeScreen(),
+    SavedScreen(),
     AboutScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final savedCount = context.watch<SavedModel>().items.length;
     return Scaffold(
       body: IndexedStack(
         index: _tab,
@@ -91,12 +101,22 @@ class _RootScreenState extends State<_RootScreen> {
         unselectedItemColor: Colors.grey,
         backgroundColor: Colors.white,
         elevation: 8,
-        items: const [
-          BottomNavigationBarItem(
+        type: BottomNavigationBarType.fixed,
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart_rounded),
             label: '검색',
           ),
           BottomNavigationBarItem(
+            icon: savedCount > 0
+                ? Badge(
+                    label: Text('$savedCount'),
+                    child: const Icon(Icons.bookmark_rounded),
+                  )
+                : const Icon(Icons.bookmark_border_rounded),
+            label: '저장',
+          ),
+          const BottomNavigationBarItem(
             icon: Icon(Icons.info_outline_rounded),
             label: 'About',
           ),

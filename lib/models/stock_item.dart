@@ -10,6 +10,12 @@ class Metric {
         value: json['value'] ?? '',
         positive: json['positive'],
       );
+
+  Map<String, dynamic> toJson() => {
+        'label': label,
+        'value': value,
+        'positive': positive,
+      };
 }
 
 class StockItem {
@@ -48,4 +54,13 @@ class StockItem {
         badge: json['badge'] ?? '',
         badgeType: json['badgeType'] ?? 'up',
       );
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'code': code,
+        'summary': summary,
+        'metrics': metrics.map((m) => m.toJson()).toList(),
+        'badge': badge,
+        'badgeType': badgeType,
+      };
 }

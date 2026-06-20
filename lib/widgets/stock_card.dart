@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/stock_item.dart';
+import '../state/saved_model.dart';
 
 class StockCard extends StatelessWidget {
   final StockItem item;
@@ -33,6 +35,26 @@ class StockCard extends StatelessWidget {
   /// "네이버 증권에서 보기" / "View on Yahoo Finance"
   String _linkText(String label) =>
       lang == 'ko' ? '$label에서 보기' : 'View on $label';
+
+  /// 저장(북마크) 토글 버튼 — SavedModel을 직접 구독.
+  Widget _saveButton(BuildContext context) {
+    final saved = context.watch<SavedModel>().isSaved(item.code);
+    return GestureDetector(
+      onTap: () async {
+        await context.read<SavedModel>().toggle(item);
+        await HapticFeedback.selectionClick();
+      },
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 6),
+        child: Icon(
+          saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+          size: 20,
+          color: saved ? const Color(0xFF006B65) : Colors.grey.shade400,
+        ),
+      ),
+    );
+  }
 
   Future<void> _open(String url) async {
     if (url.isEmpty) return;
@@ -166,6 +188,7 @@ class StockCard extends StatelessWidget {
                                   fontWeight: FontWeight.w500,
                                   color: _badgeColor())),
                         ),
+                      if (item.code.isNotEmpty) _saveButton(context),
                     ],
                   ),
                   const SizedBox(height: 8),
