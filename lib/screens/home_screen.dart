@@ -95,6 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'no_results': '검색 결과가 없습니다.\n다른 조건으로 다시 시도해보세요.',
           'empty_hint': '조건을 선택하고 검색하세요.',
           'sector': '섹터',
+          'keyword_hint': '추가 키워드 (선택) — 예: AI, 배당',
           'disclaimer': '⚠️ 투자 참고 목적이며 투자 권유가 아닙니다.',
           'data_source': '출처: companiesmarketcap.com · 조회: ',
         }
@@ -110,6 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'no_results': 'No results found.\nTry different conditions.',
           'empty_hint': 'Select filters above and tap Search.',
           'sector': 'Sector',
+          'keyword_hint': 'Keyword (optional) — e.g. AI, dividend',
           'disclaimer': '⚠️ For informational purposes only.',
           'data_source': 'Source: companiesmarketcap.com · As of ',
         };
@@ -568,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(child: _dropdown(label: '기간', value: _krEtfPeriod, items: ['최근 1개월', '최근 3개월', '최근 6개월'], onChanged: (v) => setState(() => _krEtfPeriod = v!), isDark: isDark)),
       ]),
       const SizedBox(height: 8),
-      _keywordField(hint: '추가 키워드 (선택) — 예: AI, 배당', value: _krEtfKeyword, onChanged: (v) => _krEtfKeyword = v, isDark: isDark),
+      _keywordField(hint: t['keyword_hint']!, value: _krEtfKeyword, onChanged: (v) => _krEtfKeyword = v, isDark: isDark),
     ]);
   }
 
@@ -601,7 +603,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(child: _dropdown(label: '기간', value: _usEtfPeriod, items: ['최근 1개월', '최근 3개월', '최근 6개월'], onChanged: (v) => setState(() => _usEtfPeriod = v!), isDark: isDark)),
       ]),
       const SizedBox(height: 8),
-      _keywordField(hint: 'Keyword — e.g. AI, clean energy', value: _usEtfKeyword, onChanged: (v) => _usEtfKeyword = v, isDark: isDark),
+      _keywordField(hint: t['keyword_hint']!, value: _usEtfKeyword, onChanged: (v) => _usEtfKeyword = v, isDark: isDark),
     ]);
   }
 
