@@ -716,7 +716,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }
-          return StockCard(item: _items[i], isKorean: _isKr);
+          return StockCard(item: _items[i], isKorean: _isKr, lang: _lang);
         },
       ),
     );

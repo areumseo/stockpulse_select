@@ -6,8 +6,14 @@ import '../models/stock_item.dart';
 class StockCard extends StatelessWidget {
   final StockItem item;
   final bool isKorean;
+  final String lang; // 'ko' | 'en' — UI 언어 (링크 문구용)
 
-  const StockCard({super.key, required this.item, required this.isKorean});
+  const StockCard({
+    super.key,
+    required this.item,
+    required this.isKorean,
+    this.lang = 'ko',
+  });
 
   String get _naverUrl => item.code.isNotEmpty
       ? 'https://finance.naver.com/item/main.naver?code=${item.code}'
@@ -17,10 +23,16 @@ class StockCard extends StatelessWidget {
       ? 'https://finance.yahoo.com/quote/${item.code}'
       : '';
 
-  Future<({String url, String label})> _resolveLink() async {
-    if (!isKorean) return (url: _yahooUrl, label: 'Yahoo Finance');
-    return (url: _naverUrl, label: '네이버 증권');
+  ({String url, String label}) _resolveLink() {
+    if (!isKorean) {
+      return (url: _yahooUrl, label: 'Yahoo Finance');
+    }
+    return (url: _naverUrl, label: lang == 'ko' ? '네이버 증권' : 'Naver Finance');
   }
+
+  /// "네이버 증권에서 보기" / "View on Yahoo Finance"
+  String _linkText(String label) =>
+      lang == 'ko' ? '$label에서 보기' : 'View on $label';
 
   Future<void> _open(String url) async {
     if (url.isEmpty) return;
@@ -191,15 +203,13 @@ class StockCard extends StatelessWidget {
               ),
             ),
 
-            // ── 하단 링크 버튼 (나무증권 or 네이버/Yahoo) ────────────────
+            // ── 하단 링크 버튼 (네이버 증권 / Yahoo Finance) ────────────────
             if (hasLink) ...[
               Divider(height: 1, thickness: 1, color: dividerColor),
-              FutureBuilder<({String url, String label})>(
-                future: _resolveLink(),
-                builder: (context, snapshot) {
-                  final label = snapshot.data?.label ??
-                      (isKorean ? '네이버 증권' : 'Yahoo Finance');
-                  final url   = snapshot.data?.url ?? '';
+              Builder(
+                builder: (context) {
+                  final link = _resolveLink();
+                  final url = link.url;
 
                   const linkColor = Color(0xFF006B65);
                   const linkBg    = Color(0xFFDFF6F5);
@@ -223,7 +233,7 @@ class StockCard extends StatelessWidget {
                           Icon(Icons.open_in_new_rounded,
                               size: 13, color: linkColor),
                           const SizedBox(width: 5),
-                          Text('$label에서 보기',
+                          Text(_linkText(link.label),
                               style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
