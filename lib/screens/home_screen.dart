@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _loading = false;
   bool _refreshing = false;
   String? _error;
+  bool _searchedEmpty = false; // 검색은 정상 완료됐지만 결과가 0개
   DateTime? _lastFetched;
   int _searchGen = 0;
 
@@ -91,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'tab_lev': '레버리지 ETF',
           'search': '검색',
           'searching': 'Claude가 검색 중...',
-          'no_results': '결과를 찾지 못했습니다.',
+          'no_results': '검색 결과가 없습니다.\n다른 조건으로 다시 시도해보세요.',
           'empty_hint': '조건을 선택하고 검색하세요.',
           'sector': '섹터',
           'disclaimer': '⚠️ 투자 참고 목적이며 투자 권유가 아닙니다.',
@@ -106,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'tab_lev': 'Leveraged ETFs',
           'search': 'Search',
           'searching': 'Claude is searching...',
-          'no_results': 'No results found.',
+          'no_results': 'No results found.\nTry different conditions.',
           'empty_hint': 'Select filters above and tap Search.',
           'sector': 'Sector',
           'disclaimer': '⚠️ For informational purposes only.',
@@ -139,6 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final cached = _cache[_cacheKey];
     setState(() {
       _error = null;
+      _searchedEmpty = false;
       _loading = false;
       _refreshing = false;
       _items = (cached != null && cached.isNotEmpty) ? List.of(cached) : [];
@@ -157,13 +159,14 @@ class _HomeScreenState extends State<HomeScreen> {
         _loading = false;
         _refreshing = true;
         _error = null;
+        _searchedEmpty = false;
       });
       await _runStream(gen, key);
       return;
     }
 
     // ── 캐시 없음: 스피너 → 스트리밍 ───────────────────────────────────────
-    setState(() { _loading = true; _refreshing = false; _error = null; _items = []; });
+    setState(() { _loading = true; _refreshing = false; _error = null; _searchedEmpty = false; _items = []; });
     await _runStream(gen, key);
   }
 
@@ -185,10 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
           _cache[key] = List.of(freshItems);
           setState(() => _refreshing = false);
         } else if (_items.isEmpty) {
-          // 스트림은 정상 완료됐지만 파싱된 항목이 없음 (Claude가 JSON 대신 텍스트 반환 등)
-          setState(() => _error = _lang == 'ko'
-              ? 'AI 응답을 파싱하지 못했습니다. 잠시 후 다시 시도해주세요.'
-              : 'Could not parse AI response. Please try again.');
+          // 스트림은 정상 완료됐지만 결과가 0개 — 에러가 아니라 "결과 없음"으로 안내
+          setState(() => _searchedEmpty = true);
         }
       }
     } catch (e) {
@@ -676,12 +677,17 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.bar_chart_rounded,
-                size: 48, color: Colors.grey.shade300),
+            Icon(
+                _searchedEmpty
+                    ? Icons.search_off_rounded
+                    : Icons.bar_chart_rounded,
+                size: 48,
+                color: Colors.grey.shade300),
             const SizedBox(height: 12),
-            Text(t['empty_hint']!,
+            Text(_searchedEmpty ? t['no_results']! : t['empty_hint']!,
+                textAlign: TextAlign.center,
                 style: const TextStyle(
-                    fontSize: 14, color: Color(0xFFADB3C8))),
+                    fontSize: 14, color: Color(0xFFADB3C8), height: 1.5)),
           ],
         ),
       );
