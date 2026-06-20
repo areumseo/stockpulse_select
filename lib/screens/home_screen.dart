@@ -52,8 +52,14 @@ class _HomeScreenState extends State<HomeScreen> {
   // 탭별 결과 캐시 — 앱 세션 동안 유지
   static final Map<String, List<StockItem>> _cache = {};
 
-  String get _cacheKey =>
-      '${_isKr ? 'kr' : 'us'}_${_tabIndex}_${_isKr ? _krSector : _usSector}';
+  String get _cacheKey {
+    final prefix = '${_isKr ? 'kr' : 'us'}_$_tabIndex';
+    // 시총 탭은 섹터로 구분. ETF/레버리지 탭은 실제 검색 프롬프트(유형·기간·섹터·키워드)로
+    // 구분해야 키워드만 바꿔 다시 검색해도 새 결과가 뜬다.
+    return _tabIndex == 0
+        ? '${prefix}_${_isKr ? _krSector : _usSector}'
+        : '${prefix}_${_buildPrompt()}';
+  }
 
   bool get _isKr => _countryIndex == 0;
 
