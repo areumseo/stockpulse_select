@@ -14,12 +14,8 @@ class ApiService {
   }) {
     final sectorStr = sector == 'all' ? '' : '$sector 섹터 ';
     final countryStr = country == 'kr' ? '한국' : '미국';
-    final krwNote = (country == 'kr' && lang == 'ko')
-        ? ' 시총과 주가는 원화(₩)로 표시하세요(예: ₩2,450조, ₩85,000).'
-        : '';
     final prompt = '$countryStr $sectorStr시가총액 상위 20개 종목을 웹에서 검색해서 '
-        '최근 이슈와 투자 포인트를 정리해주세요. '
-        '시총·현재가·등락률을 포함하세요. 정확히 20개 항목을 반환하세요.$krwNote';
+        '최근 이슈와 투자 포인트를 정리해주세요. 정확히 20개 항목을 반환하세요.';
 
     return _searchStream(prompt: prompt, lang: lang, useWebsearch: true);
   }
