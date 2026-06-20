@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _search());
+    // 앱 시작 시 자동 검색하지 않음 — 사용자가 조건 선택 후 '검색'을 눌러야 실행.
   }
 
   @override
@@ -129,6 +129,20 @@ class _HomeScreenState extends State<HomeScreen> {
   void _cancelSearch() {
     _searchGen++; // 현재 스트림 무효화 → _runStream이 감지하고 return
     setState(() { _loading = false; _refreshing = false; });
+  }
+
+  /// 탭·국가 전환 시: 네트워크 호출 없이 앱 캐시만 복원(있으면 즉시 표시).
+  /// 캐시가 없으면 빈 화면 → "조건을 선택하고 검색하세요" 힌트 노출.
+  /// 실제 검색은 사용자가 '검색' 버튼을 눌렀을 때만 수행한다.
+  void _switchContext() {
+    _searchGen++; // 진행 중이던 스트림이 있으면 무효화
+    final cached = _cache[_cacheKey];
+    setState(() {
+      _error = null;
+      _loading = false;
+      _refreshing = false;
+      _items = (cached != null && cached.isNotEmpty) ? List.of(cached) : [];
+    });
   }
 
   Future<void> _search() async {
@@ -288,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _countryIndex = v!;
                         _error = null;
                       });
-                      _search();
+                      _switchContext();
                     },
                   ),
                 ),
@@ -324,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             _tabIndex = i;
                             _error = null;
                           });
-                          _search();
+                          _switchContext();
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 180),
